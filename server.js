@@ -2,27 +2,27 @@ import { ApolloServer, gql } from "apollo-server";
 
 let tweets = [
     {
-        id:"1",
-        text:"first one!",
-        userId:"1",
+        id: "1",
+        text: "first one!",
+        userId: "1",
     },
     {
-        id:"2",
-        text:"second one!",
-        userId:"2",
+        id: "2",
+        text: "second one!",
+        userId: "2",
     }
 ]
 
 let users = [
     {
-        id:"1",
-        firstName:"euijung",
-        lastName:"lee"
+        id: "1",
+        firstName: "euijung",
+        lastName: "lee"
     },
     {
-        id:"2",
-        firstName:"Elon",
-        lastName:"Mask"
+        id: "2",
+        firstName: "Elon",
+        lastName: "Mask"
     }
 ]
 
@@ -50,21 +50,21 @@ const typeDefs = gql`
 `;
 
 const resolvers = {
-    Query : {
-        allUsers(){
+    Query: {
+        allUsers() {
             return users;
         },
-        allTweets(){
+        allTweets() {
             return tweets;
         },
-        tweet(root, {id}){
+        tweet(root, { id }) {
             return tweets.find(tweet => tweet.id === id);
         }
     },
     Mutation: {
         postTweet(_, { text, userId }) {
             const user = users.find(user => user.id === userId);
-            if(!user) return console.error();
+            if (!user) return console.error();
             const newTweet = {
                 id: tweets.length + 1,
                 text,
@@ -75,28 +75,28 @@ const resolvers = {
         },
         DeleteTweet(_, { tweetId }) {
             const tweet = tweets.find(tweet => tweet.id === tweetId);
-            if(!tweet)return false;
+            if (!tweet) return false;
             tweets = tweets.filter(tweet => tweet.id !== tweetId);
             return true;
         }
     },
     User: {
-        firstName({firstName}){
+        firstName({ firstName }) {
             return firstName;
         },
-        fullName({firstName, lastName}){
+        fullName({ firstName, lastName }) {
             return `${firstName} ${lastName}`;
         }
     },
     Tweet: {
-        author({userId}){
+        author({ userId }) {
             return users.find(user => user.id === userId);
         }
     }
 };
 
-const server = new ApolloServer({typeDefs, resolvers});
+const server = new ApolloServer({ typeDefs, resolvers });
 
-server.listen().then(({url}) => {
+server.listen().then(({ url }) => {
     console.log(`running on ${url}`)
 });
