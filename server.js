@@ -45,9 +45,11 @@ const typeDefs = gql`
         author: User
     }
     type Query {
+        allMovies: [Movie!]!
         allUsers: [User!]!
         allTweets: [Tweet!]!
         tweet(id: ID!): Tweet
+        movie(id:String): Movie
     }
     type Mutation {
         postTweet(text:String!, userId: ID!): Tweet!
@@ -55,6 +57,29 @@ const typeDefs = gql`
         Delete a Tweet if found, else returns false
         """
         DeleteTweet(tweetId: ID!): Boolean!
+    }
+    type Movie{
+        id:Int!
+        url:String!
+        imdb_code:String!
+        title:String!
+        title_english:String!
+        title_long:String!
+        slug:String!
+        year:Int!
+        rating:Float!
+        runtime:Float!
+        genres:[String!]!
+        summary:String
+        description_full:String!
+        synopsis:String
+        yt_trailer_code:String!
+        language:String!
+        background_image:String!
+        background_image_original:String!
+        small_cover_image:String!
+        medium_cover_image:String!
+        large_cover_image:String!
     }
 `;
 
@@ -68,6 +93,12 @@ const resolvers = {
         },
         tweet(root, { id }) {
             return tweets.find(tweet => tweet.id === id);
+        },
+        allMovies(){
+            return fetch('https://yts.mx/api/v2/list_movies.json').then(data => data.json()).then(json => json.data.movies);
+        },
+        movie(_,{id}){
+            return fetch(`https://yts.mx/api/v2/movie_details.json?movie_id=${id}`).then(data => data.json()).then(json => json.data.movie);
         }
     },
     Mutation: {
